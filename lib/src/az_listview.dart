@@ -144,8 +144,31 @@ class _AzListViewState extends State<AzListView> {
 
   void _scrollTopIndex(String tag) {
     int index = _getIndex(tag);
+    int itemsCountOnScreen = itemPositionsListener.itemPositions.value.length;
     if (index != -1) {
-      itemScrollController.jumpTo(index: index);
+      //如果要跳转的条目后面的数据个数<屏幕可容纳的数据个数,使用align属性去调整跳转
+      //条目在屏幕上的位置。align默认是0，即条目的头部top与可视部分上边缘对齐。
+      //计算正确的对齐位置，才能让它正常显示。
+
+      //if the the items'counts after the item you want to jump less than
+      //full screen items counts, use the align to justify the item's location
+      // to be correct. The align defaults to be 0, which means the item's top
+      // to align the view's top.
+      //change the data of alignment and make it show properly.
+      if ((widget.data.length - index) < itemsCountOnScreen) {
+        //可视口由两部分组成，一个是其它数据，一个是期望数据（即想要跳转却不足以填充屏幕的数据）。
+        //用其他数据个数/总数据个数，作为alignment，就可以让期望数据正确对齐而不发生反弹。
+
+        //The view port includes other datas and expected datas(this refers to
+        //the data you want to jump but can't fill the screen and therefor causes
+        //out bouncing).
+        //other datas' length / all datas'length = alignment(the correct rete to align expected datas)
+        double alignment = (itemsCountOnScreen - (widget.data.length - index)) /
+            itemsCountOnScreen;
+        itemScrollController.jumpTo(alignment: alignment, index: index);
+      } else {
+        itemScrollController.jumpTo(index: index);
+      }
     }
   }
 
