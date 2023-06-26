@@ -110,6 +110,9 @@ class _AzListViewState extends State<AzListView> {
 
   String selectTag = '';
 
+  //记录当前的跳转的下角标
+  int currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -163,10 +166,16 @@ class _AzListViewState extends State<AzListView> {
         //the data you want to jump but can't fill the screen and therefor causes
         //out bouncing).
         //other datas' length / all datas'length = alignment(the correct rete to align expected datas)
-        double alignment = (itemsCountOnScreen - (widget.data.length - index)) /
-            itemsCountOnScreen;
-        itemScrollController.jumpTo(alignment: alignment, index: index);
+        // double alignment = (itemsCountOnScreen - (widget.data.length - index)) /
+        //     itemsCountOnScreen;
+        // itemScrollController.jumpTo(alignment: alignment, index: index);
+
+        if (itemsCountOnScreen > (currentIndex - index) && currentIndex != widget.data.length) {
+          currentIndex = widget.data.length;
+          itemScrollController.jumpTo(index: widget.data.length);
+        }
       } else {
+        currentIndex = index;
         itemScrollController.jumpTo(index: index);
       }
     }
